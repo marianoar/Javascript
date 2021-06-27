@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <title>clase 12</title>
+</head>
+
+<body>
+  <style>
+    .spinner {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 300px;
+      background-color: aqua;
+    }
+  </style>
+
+  <button onclick="getCocineros();">Traer datos Ajax</button>
+  <button onclick="altaCocinero();">Post datos Ajax</button>
+  <button onclick="deleteCocinero();">Borrar datos Ajax</button>
+  <button onclick="updateCocinero();">Modificar datos Ajax</button>
+  <button onclick="getDatosFetch();">Traer datos Fetch</button>
+  <button onclick="getDatosFetchAsync();">Traer datos Async Await</button>
+  <button onclick="getDatosAxios();">Traer datos Axios</button>
+  <button onclick="getDatosAxiosAsync();">Traer datos Axios Async</button>
+  <div class="spinner">
+
+  </div>
+  <script>
+
+    let data = [];
+
+    const createSpinner = () => {
+      const spinner = document.createElement("img");
+      spinner.setAttribute("src", "./assets/Settings.gif");
+      spinner.setAttribute("alt", "imagen spinner");
+      return spinner;
+    };
+
+    const getCocineros = () => {
+      //1 instanciamos objeto de la clase 
+      const xhr = new XMLHttpRequest();
+      document.querySelector(".spinner").appendChild(createSpinner());
+      // console.log(xhr.readyState);
+
+
+      //2 asigno manejador de eventos, un handler. Puede hacerse de dos maneras, como propiedad o metodo
+      xhr.onreadystatechange = () => {
+
+        if (xhr.readyState == 4) {
+          //  console.log("entre"+xhr.readyState);
+          if (xhr.status >= 200 && xhr.status < 299) {
+            data = JSON.parse(xhr.responseText);
+            console.log(data);
+          } else {
+            const statusText = xhr.statusText || "Ocurrio un error";
+            console.log(`Error: ${xhr.status} : ${statusText}`);
+          }
+          document.querySelector(".spinner").innerHTML = "";
+        } else {
+          // console.log(xhr.readyState);
+          document.querySelector(".spinner").appendChild(createSpinner());
+        }
+      };
+      //segunda forma
+      // xhr.addEventListener "readystatechange", =>
+
+      // 
+      // 3 abrir la peticion: adonde va y con que metodo
+
+      xhr.open("GET", "http://localhost:3000/cocineros/");//tercer parametro es si es asincrona o no. Pero AJAX es justamente asincrono!
+
+      // 4 envier la peticion
+      xhr.send();
+    };
+
+    const altaCocinero = () => {
+
+      const nuevoCocinero = {
+        nombre: "Cuca",
+        especialidad: "Esparragos"
+      };
+
+      const xhr = new XMLHttpRequest();
+      //document.querySelector(".spinner").appendChild(createSpinner());
+
+      xhr.onreadystatechange = () => {
+
+        if (xhr.readyState == 4) {
+
+          if (xhr.status >= 200 && xhr.status < 299) {
+            data = JSON.parse(xhr.responseText);
+
+          } else {
+            const statusText = xhr.statusText || "Ocurrio un error";
+            console.log(`Error: ${xhr.status} : ${statusText}`);
+          }
+          document.querySelector(".spinner").innerHTML = "";
+        } else {
+
+          document.querySelector(".spinner").appendChild(createSpinner());
+        }
+      };
+      xhr.open("POST", "http://localhost:3000/cocineros/");
+      //seteo cabecera MIME types
+      xhr.setRequestHeader("Content-Type","application/json;charset=utf-8")
+      xhr.send(JSON.stringify(nuevoCocinero));
+    };
+
+    const deleteCocinero = () => {
+
+let id = 3;
+
+const xhr = new XMLHttpRequest();
+//document.querySelector(".spinner").appendChild(createSpinner());
+
+xhr.onreadystatechange = () => {
+
+  if (xhr.readyState == 4) {
+
+    if (xhr.status >= 200 && xhr.status < 299) {
+      data = JSON.parse(xhr.responseText);
+
+    } else {
+      const statusText = xhr.statusText || "Ocurrio un error";
+      console.log(`Error: ${xhr.status} : ${statusText}`);
+    }
+    document.querySelector(".spinner").innerHTML = "";
+  } else {
+
+    document.querySelector(".spinner").appendChild(createSpinner());
+  }
+};
+xhr.open("DELETE", "http://localhost:3000/cocineros/"+id);
+//seteo cabecera MIME types
+//xhr.setRequestHeader("Content-Type","application/json;charset=utf-8")
+xhr.send();
+};
+const updateCocinero = () => {
+
+const cocineroUpdate = {
+  nombre: "Emilia",
+  especialidad: "Esparragos"
+};
+
+const xhr = new XMLHttpRequest();
+//document.querySelector(".spinner").appendChild(createSpinner());
+
+xhr.onreadystatechange = () => {
+
+  if (xhr.readyState == 4) {
+
+    if (xhr.status >= 200 && xhr.status < 299) {
+      data = JSON.parse(xhr.responseText);
+
+    } else {
+      const statusText = xhr.statusText || "Ocurrio un error";
+      console.log(`Error: ${xhr.status} : ${statusText}`);
+    }
+    document.querySelector(".spinner").innerHTML = "";
+  } else {
+
+    document.querySelector(".spinner").appendChild(createSpinner());
+  }
+};
+xhr.open("PUT", "http://localhost:3000/cocineros/"+"4");
+//seteo cabecera MIME types
+xhr.setRequestHeader("Content-Type","application/json;charset=utf-8")
+xhr.send(JSON.stringify(cocineroUpdate));
+};
+
+
+
+    const getDatosFetch = () => { // es por default GET
+      fetch("http://localhost:3000/cocineros/")
+        .then((res) => {
+          //console.log(res);
+          return res.ok ? res.json() : Promise.reject(res);
+        }).then((data) => {
+          console.log(data);
+
+        })
+        .catch(err => {
+          console.log(`Error : ${err.status}:${err.statusText}`);
+        })
+        .finally(() => {
+          //document.querySelector(".spinner").appendChild(createSpinner());
+        })
+    };
+
+    const getDatosFetchAsync = async () => {
+      try {
+        const res = await fetch("http://localhost:3000/cocineros/"); // espera y guarda la respuesta en res
+        if (!res.ok) {
+          //throw new Error("Ocurrio un error"); //asi solo tengo un string
+          throw { error: res.status, statusText: res.statusText }; //asi devuelvo un objeto
+        }
+        data = await res.json();
+        console.log(data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    const getDatosAxios = () => {
+      axios.get("http://localhost:3000/cocineros/")
+        .then((res) => {
+          data = res.data;
+          console.log(data);
+        })
+        .catch((err) => {
+          console.log(err.response);
+        });
+    }
+
+
+    const getDatosAxiosAsync = async () => {
+      try {
+        //de lo que devuelve me quedo con data desesctructurando
+        const { data } = await axios.get("http://localhost:3000/cocineros/");
+        console.log(data);
+      } catch (err) {
+        console.log(err.response);
+      }
+    };
+  </script>
+
+</body>
+
+</html>

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=, initial-scale=1.0">
+  <title>Async Await</title>
+</head>
+
+<body>
+  <script>
+
+
+    function sumar(a, b) {
+      let suma;
+
+      return new Promise((resolve, reject) => {
+
+        setTimeout(() => {
+          if (typeof a !== "number" || typeof b !== "number") {
+            reject("Parametros suma invaludos");
+          } else {
+            resolve(a + b);
+          }
+        }, 3000);
+      });
+    };
+
+    function cuadrado(a) {
+      return new Promise((resolve, reject) => {
+
+        setTimeout(() => {
+          if (typeof a !== "number") {
+            reject("Parametros cuadrado invalidos");
+          } else {
+            resolve(a * a);
+          }
+        }, 3000);
+      });
+    };
+
+    function producto(a, b) {
+      let prod;
+
+      return new Promise((resolve, reject) => {
+
+        setTimeout(() => {
+          if (typeof a !== "number" || typeof b !== "number") {
+            reject("Parametros producto invalidos");
+          } else {
+            resolve(a * b);
+          }
+        }, 3000);
+      });
+    };
+
+
+    async function realizarOp(a,b) {
+
+      let suma = await sumar(a,b);
+      let cuad = await cuadrado(suma);
+      let final = await producto(cuad, 10);
+      console.log(final);
+    }
+
+    //otra forma
+
+    const realizarOperaciones = async (a,b) => {
+      try {
+        let suma = await sumar(a, b);
+        let cuad = await cuadrado(suma);
+        let final = await producto(cuad, 10);
+        console.log(final);
+      } catch (error) {
+        console.error(error);
+      }
+    }
+    // sumar(4,3)
+    //   .then(suma=> cuadrado(suma))
+    //   .then(cuad=> producto(cuad, 10))
+    //   .then(resultado=>{ console.log("el resultado es: "+resultado);})
+    //   .catch(error=>{ console.log(error); });
+
+
+    console.log("inicia");
+    realizarOp(4,3);
+    console.log("fin");
+
+    console.log("inicia funcion expresada");
+    realizarOperaciones(4,3);
+    console.log("fin funcion expresada");
+  </script>
+</body>
+
+</html>
